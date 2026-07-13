@@ -1,72 +1,86 @@
 import streamlit as st
 import hashlib
 import base64
-from datetime import datetime
+from datetime import datetime, timedelta
 
-# ==============================================================================
-# CONFIG GIAO DIỆN STREAMLIT - NTS STUDIO
-# ==============================================================================
-st.set_page_config(page_title="NTS Hacker Empire - Admin Panel", page_icon="🔥", layout="centered")
+# =====================================================================
+# CONFIG GIAO DIỆN CYBERPUNK (RED TEAM STYLE)
+# =====================================================================
+st.set_page_config(page_title="NTS KEYGEN CENTER", page_icon="🔥", layout="centered")
 
 st.markdown("""
-    <h1 style='text-align: center; color: #ff4b4b;'>🔥 NTS STUDIO - TRUNG TÂM CẤP PHÁT BẢN QUYỀN 🔥</h1>
-    <p style='text-align: center; color: gray;'>Hệ thống tự động hóa cấp Key đa nền tảng - Doanh thu tự động</p>
-    <hr>
+<style>
+    .main-title { font-size: 3em; font-weight: 900; color: #38bdf8; text-align: center; text-transform: uppercase; text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
+    .sub-title { text-align: center; color: #94a3b8; font-size: 1.2em; margin-bottom: 30px; font-weight: 600; }
+    .key-box { background-color: #111827; border: 1px solid #f59e0b; padding: 20px; border-radius: 10px; text-align: center; }
+    .key-text { color: #f59e0b; font-size: 1.5em; font-weight: 900; letter-spacing: 2px; }
+    div[data-baseweb="select"] > div { background-color: #1e293b; color: white; border: 1px solid #38bdf8; }
+</style>
 """, unsafe_allow_html=True)
 
-# ==============================================================================
-# LÕI THUẬT TOÁN 1: PDF MASTER TOOL
-# ==============================================================================
-MASTER_KEY_PDF = "GHOST_HACK_NTS_9999"
+# =====================================================================
+# LÕI 1: GHOST_HACK - HYBRID KEY GENERATOR V2.1 (TỪ SOURCE 3)
+# =====================================================================
+MASTER_KEY = "GHOST_HACK_NTS_9999"
 
-def generate_pdf_key(hwid: str, expiry_date: str, is_pro: bool = False):
+def get_hybrid_key(hwid: str, expiry_date: str, is_pro: bool = False):
     try:
         expiry_date = expiry_date.strip().replace("-", "/").replace(".", "/")
         parts = expiry_date.split("/")
         if len(parts) == 3 and len(parts[2]) == 4:
-            parts[2] = parts[2][2:] 
+            parts[2] = parts[2][2:]
             expiry_date = "/".join(parts)
             
         dt = datetime.strptime(expiry_date, "%d/%m/%y")
-        date_str = dt.strftime("%d%m%y") 
+        date_str = dt.strftime("%d%m%y")
         
         raw_data = date_str + ("1" if is_pro else "0")
         raw_bytes = raw_data.encode('utf-8')
         
-        keystream = hashlib.md5((hwid + MASTER_KEY_PDF).encode('utf-8')).digest()
+        keystream = hashlib.md5((hwid + MASTER_KEY).encode('utf-8')).digest()
         xored = bytes([raw_bytes[i] ^ keystream[i] for i in range(7)])
         short_key = base64.b32encode(xored).decode('utf-8').rstrip('=')
         
         return f"{short_key[:4]}-{short_key[4:8]}-{short_key[8:]}"
+    except ValueError:
+        return "❌ LỖI: Định dạng ngày không hợp lệ! Hãy nhập (dd/mm/yy) hoặc (dd/mm/yyyy)"
     except Exception as e:
-        return f"[!] LỖI HỆ THỐNG PDF: {str(e)}"
+        return f"❌ LỖI HỆ THỐNG: {str(e)}"
 
-# ==============================================================================
-# LÕI THUẬT TOÁN 2: YOUTUBE DOWNLOADER
-# ==============================================================================
-SECRET_SALT_PRO_YT = "NTS_SECRET_SUPER_SALT_999999_PRO_2026"
-SECRET_SALT_STD_YT = "NTS_SECRET_SUPER_SALT_999999_STD_2026"
+# =====================================================================
+# LÕI 2: NTS ADMIN KEYGEN - MÁY IN TIỀN V1.0 (TỪ SOURCE 4)
+# =====================================================================
+class NTS_Admin_Forge:
+    def __init__(self):
+        self.secret_salt = "NTS_JOKER_SMILE_100B"
 
-def generate_youtube_key(hwid, expiry_date, package="1"):
-    hwid = hwid.strip().upper()
-    if isinstance(expiry_date, datetime):
-        expiry_date = expiry_date.strftime("%Y%m%d")
-    else:
-        if "-" in expiry_date:
-            expiry_date = datetime.strptime(expiry_date, "%Y-%m-%d").strftime("%Y%m%d")
-        elif "/" in expiry_date:
-            expiry_date = datetime.strptime(expiry_date, "%d/%m/%Y").strftime("%Y%m%d")
+    def create_payload_string(self, hwid, plan, compact_date):
+        return f"{hwid}|{plan}|{compact_date}|{self.secret_salt}"
 
-    active_salt = SECRET_SALT_PRO_YT if str(package) == "2" else SECRET_SALT_STD_YT
-    raw_str = f"{hwid}{expiry_date}{active_salt}"
-    return hashlib.sha256(raw_str.encode()).hexdigest()[:20].upper()
+    def forge_key(self, hwid, plan_choice, days_valid):
+        try:
+            hwid = hwid.strip().upper()
+            exp_date = datetime.now() + timedelta(days=days_valid)
+            compact_date = exp_date.strftime("%y%m%d")
+            
+            plan = "VIP" if plan_choice == 1 else "STANDARD"
+            
+            raw_payload = self.create_payload_string(hwid, plan, compact_date)
+            encoded_payload = raw_payload.encode('utf-8')
+            
+            signature = hashlib.sha256(encoded_payload).hexdigest().upper()[:8]
+            final_key = f"{plan}-{signature}-{compact_date}"
+            
+            return True, final_key, exp_date.strftime("%Y-%m-%d")
+        except Exception as e:
+            return False, str(e), None
 
-# ==============================================================================
-# LÕI THUẬT TOÁN 3: TIKTOK NO-WATERMARK
-# ==============================================================================
+# =====================================================================
+# LÕI 3: THUẬT TOÁN TIKTOK NO-WATERMARK (TỪ SOURCE 5)
+# =====================================================================
 SECRET_SALT_TIKTOK = "NTS_100_TY_PRO_MAX_WHITEHAT_2026_@#$%"
 
-def generate_tiktok_key(hwid, expiry_date, *args):
+def get_tiktok_key(hwid, expiry_date, *args):
     try:
         datetime.strptime(expiry_date, "%Y-%m-%d")
         raw_data = f"{hwid}|{expiry_date}|{SECRET_SALT_TIKTOK}"
@@ -74,76 +88,93 @@ def generate_tiktok_key(hwid, expiry_date, *args):
         final_key_raw = f"{expiry_date}|{signature}"
         final_key = base64.b64encode(final_key_raw.encode()).decode()
         return final_key
+    except ValueError:
+        return "❌ LỖI ĐỊNH DẠNG: Yêu cầu ngày nhập kiểu YYYY-MM-DD (Ví dụ: 2026-08-30)"
     except Exception as e:
-        return f"❌ LỖI HỆ THỐNG TIKTOK: {str(e)}"
+        return f"❌ LỖI HỆ THỐNG: {str(e)}"
 
-# ==============================================================================
-# XÂY DỰNG GIAO DIỆN CHIA TAB
-# ==============================================================================
-tab_pdf, tab_yt, tab_tiktok = st.tabs(["📄 GHOST HACK PDF", "🎥 YOUTUBE VIP", "🎵 TIKTOK NO-LOGO"])
+# =====================================================================
+# XÂY DỰNG GIAO DIỆN ĐIỀU KHIỂN
+# =====================================================================
+st.markdown("<div class='main-title'>NTS KEYGEN DASHBOARD</div>", unsafe_allow_html=True)
+st.markdown("<div class='sub-title'>Hệ thống đúc khóa bản quyền tập trung - Phân quyền tối cao</div>", unsafe_allow_html=True)
 
-# -----------------------------------
-# TAB 1: PDF MASTER
-# -----------------------------------
-with tab_pdf:
-    st.subheader("Trạm cấp Key PDF Master")
-    hwid_pdf = st.text_input("Mã HWID (Khách gửi):", key="hwid_pdf").strip()
-    date_pdf = st.date_input("Ngày hết hạn:", key="date_pdf")
-    pkg_pdf = st.radio("Chọn gói kích hoạt:", ["Bản THƯỜNG (Giới hạn 32MB)", "Bản PRO VIP (Không giới hạn)"], key="pkg_pdf")
+# Menu bẻ nhánh hiển thị hệ thống đúc Key
+tool_choice = st.selectbox(
+    "🔥 LỰA CHỌN CỖ MÁY IN TIỀN:", 
+    ["1. NTS YouTube & General (Admin Forge V1.0)", 
+     "2. Hệ thống Hybrid V2.1 (Bản cũ Fix)", 
+     "3. TikTok No-Watermark Core"]
+)
+
+st.markdown("---")
+
+# ---------------------------------------------------------------------
+# GIAO DIỆN 1: ADMIN FORGE V1.0 (YouTube & General)
+# ---------------------------------------------------------------------
+if "Admin Forge V1.0" in tool_choice:
+    st.subheader("🛠️ CẤU HÌNH YOUTUBE / APP V6.0")
+    hwid_in = st.text_input("💻 Nhập Mã HWID của khách:")
     
-    if st.button("🚀 ĐÚC KEY PDF", type="primary", use_container_width=True):
-        if not hwid_pdf:
-            st.error("Chưa nhập HWID kìa sếp!")
+    col1, col2 = st.columns(2)
+    with col1:
+        plan_str = st.radio("👑 Chọn Gói Cấp Phép:", ["VIP Premium (Mở khóa toàn bộ)", "STANDARD (Giới hạn)"])
+        plan_code = 1 if "VIP" in plan_str else 2
+    with col2:
+        days_in = st.number_input("⏳ Số ngày sử dụng (Ví dụ: 30, 365):", min_value=1, value=30, step=1)
+        
+    if st.button("🚀 ĐÚC KEY NGAY", type="primary", use_container_width=True):
+        if not hwid_in:
+            st.error("Chưa nhập HWID kìa sếp ơi!")
         else:
-            is_pro = True if "PRO" in pkg_pdf else False
-            # Chuyển đổi datetime object sang string dd/mm/yyyy chuẩn của lõi PDF
-            date_str_pdf = date_pdf.strftime("%d/%m/%Y") 
-            key_result = generate_pdf_key(hwid_pdf, date_str_pdf, is_pro)
-            
-            st.success("✅ ĐÚC KEY THÀNH CÔNG!")
-            st.info("Copy mã bên dưới gửi cho khách:")
-            st.code(key_result, language="text")
+            forge = NTS_Admin_Forge()
+            success, key_out, real_date = forge.forge_key(hwid_in, plan_code, days_in)
+            if success:
+                st.success("✅ ĐÚC KEY THÀNH CÔNG! LƯỢM LÚA THÔI SẾP!")
+                st.info(f"Ngày hết hạn thực tế: **{real_date}**")
+                st.markdown(f"<div class='key-box'>🔑 BẢN QUYỀN KHÁCH HÀNG:<br><br><span class='key-text'>{key_out}</span></div>", unsafe_allow_html=True)
+            else:
+                st.error(f"LỖI: {key_out}")
 
-# -----------------------------------
-# TAB 2: YOUTUBE DOWNLOADER
-# -----------------------------------
-with tab_yt:
-    st.subheader("Trạm cấp Key YouTube Downloader")
-    hwid_yt = st.text_input("Mã HWID (Khách gửi):", key="hwid_yt").strip()
-    date_yt = st.date_input("Ngày hết hạn:", key="date_yt")
-    pkg_yt = st.radio("Chọn gói kích hoạt:", ["1. Bản Thường (29k / Tải YT thường)", "2. Bản PRO VIP (Bypass Video Hội Viên)"], key="pkg_yt")
+# ---------------------------------------------------------------------
+# GIAO DIỆN 2: HYBRID V2.1
+# ---------------------------------------------------------------------
+elif "Hybrid V2.1" in tool_choice:
+    st.subheader("🛠️ CẤU HÌNH HYBRID TOOL")
+    hwid_in = st.text_input("💻 Nhập Mã HWID của khách:")
     
-    if st.button("🚀 ĐÚC KEY YOUTUBE", type="primary", use_container_width=True):
-        if not hwid_yt:
-            st.error("Chưa nhập HWID kìa sếp!")
+    col1, col2 = st.columns(2)
+    with col1:
+        date_in = st.text_input("📅 Ngày hết hạn (VD: 01/02/2026):", placeholder="dd/mm/yyyy")
+    with col2:
+        is_pro = st.toggle("Kích hoạt bản PRO (Không giới hạn)")
+        
+    if st.button("🚀 ĐÚC KEY NGAY", type="primary", use_container_width=True):
+        if not hwid_in or not date_in:
+            st.error("Nhập thiếu dữ liệu rồi sếp!")
         else:
-            package_val = "2" if "PRO" in pkg_yt else "1"
-            date_str_yt = date_yt.strftime("%Y-%m-%d")
-            key_result = generate_youtube_key(hwid_yt, date_str_yt, package_val)
-            
-            st.success("✅ ĐÚC KEY THÀNH CÔNG!")
-            st.info("Copy mã bên dưới gửi cho khách:")
-            st.code(key_result, language="text")
+            key_out = get_hybrid_key(hwid_in, date_in, is_pro)
+            if "❌" in key_out:
+                st.error(key_out)
+            else:
+                st.success(f"✅ ĐÚC KEY BẢN [{'PRO VIP' if is_pro else 'THƯỜNG'}] THÀNH CÔNG!")
+                st.markdown(f"<div class='key-box'>🔑 BẢN QUYỀN KHÁCH HÀNG:<br><br><span class='key-text'>{key_out}</span></div>", unsafe_allow_html=True)
 
-# -----------------------------------
-# TAB 3: TIKTOK NO-WATERMARK
-# -----------------------------------
-with tab_tiktok:
-    st.subheader("Trạm cấp Key TikTok No-Logo")
-    hwid_tt = st.text_input("Mã HWID (Khách gửi):", key="hwid_tt").strip()
-    date_tt = st.date_input("Ngày hết hạn:", key="date_tt")
+# ---------------------------------------------------------------------
+# GIAO DIỆN 3: TIKTOK NO-WATERMARK
+# ---------------------------------------------------------------------
+elif "TikTok" in tool_choice:
+    st.subheader("🛠️ CẤU HÌNH TIKTOK CORE")
+    hwid_in = st.text_input("💻 Nhập Mã HWID của khách:")
+    date_in = st.text_input("📅 Ngày hết hạn (Bắt buộc format YYYY-MM-DD):", placeholder="2026-08-30")
     
-    if st.button("🚀 ĐÚC KEY TIKTOK", type="primary", use_container_width=True):
-        if not hwid_tt:
-            st.error("Chưa nhập HWID kìa sếp!")
+    if st.button("🚀 ĐÚC KEY NGAY", type="primary", use_container_width=True):
+        if not hwid_in or not date_in:
+            st.error("Nhập thiếu dữ liệu kìa sếp!")
         else:
-            # Thuật toán TikTok bắt buộc format YYYY-MM-DD
-            date_str_tt = date_tt.strftime("%Y-%m-%d")
-            key_result = generate_tiktok_key(hwid_tt, date_str_tt)
-            
-            st.success("✅ ĐÚC KEY THÀNH CÔNG!")
-            st.info("Copy mã bên dưới gửi cho khách:")
-            st.code(key_result, language="text")
-
-# Footer
-st.markdown("<br><hr><p style='text-align: center; color: gray; font-size: 12px;'>© 2026 NTS Studio. All rights reserved.</p>", unsafe_allow_html=True)
+            key_out = get_tiktok_key(hwid_in, date_in)
+            if "❌" in key_out:
+                st.error(key_out)
+            else:
+                st.success("✅ ĐÚC KEY TIKTOK THÀNH CÔNG! ĐÃ MÃ HÓA BASE64.")
+                st.markdown(f"<div class='key-box'>🔑 BẢN QUYỀN KHÁCH HÀNG:<br><br><span class='key-text' style='word-wrap: break-word;'>{key_out}</span></div>", unsafe_allow_html=True)
